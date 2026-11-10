@@ -116,3 +116,7 @@ Run `/reload` after each edit.
 - The transcript file grows while you work, so the digest of the current session
   can miss the newest messages.
 - Titles are cut at 60 characters, the same limit maki uses.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
