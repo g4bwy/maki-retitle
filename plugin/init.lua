@@ -35,16 +35,17 @@ and what it produced or investigated. Rules:
 - No quotes, no trailing punctuation, no "Session about" prefix, no date.
 - Output only the title, nothing else.]]
 
-local settings = {
+-- Package options. The user sets them in `maki.setup` under
+-- `plugins["maki-retitle"]`, in their own init.lua. A loaded package has no
+-- other settings channel: whoever installs it cannot hand this file a table the
+-- way a `require` could.
+local opts = maki.api.register_options({
   -- Skip sessions whose title was set by hand, unless force is passed.
-  only_auto_titles = true,
-}
-
-local function setup(opts)
-  if opts and type(opts.only_auto_titles) == "boolean" then
-    settings.only_auto_titles = opts.only_auto_titles
-  end
-end
+  only_auto_titles = {
+    default = true,
+    desc = "Retitle only sessions still carrying maki's auto-generated title.",
+  },
+})
 
 -- ---------- text helpers ----------
 
@@ -376,7 +377,7 @@ The digest is read from stored transcripts, so sessions that are closed are fine
       return { llm_output = "no sessions stored for this project" }
     end
 
-    local force = input.force == true or settings.only_auto_titles == false
+    local force = input.force == true or opts.only_auto_titles == false
     local targets = {}
     local wanted = input.id
     if input.current then
@@ -488,5 +489,14 @@ maki.api.register_command({
   nargs = "*",
   handler = run_retitle,
 })
+
+-- Hand-copied into ~/.config/maki/lua, this file is also a module someone can
+-- require and configure. A loaded package has no such caller: it reads
+-- `plugins["maki-retitle"]` above. Both paths stay open.
+local function setup(o)
+  if o and type(o.only_auto_titles) == "boolean" then
+    opts.only_auto_titles = o.only_auto_titles
+  end
+end
 
 return { setup = setup }

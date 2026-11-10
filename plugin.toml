@@ -1,0 +1,18 @@
+# maki package manifest. See https://maki.sh/docs/packages/
+# A package keeps only what this file names: a permission it does not list is
+# never requested and never granted.
+
+min_maki_version = "0.7.1"
+
+[permissions]
+# maki.env.state_dir(), maki.fs.read(), maki.fs.metadata(): the digest is
+# built from the stored transcript under the state dir.
+fs_read = true
+# maki.agent.session(): the tool-less subagent that writes each title.
+# maki.session.prompt(): /retitle hands the job to this session's agent.
+agent = true
+# maki.session.prompt() starts a turn, which is a write to the conversation.
+session_write = true
+# maki.session.set_title(): a title changes how a session reads, not what it
+# contains, so it is a setting.
+session_settings = true
